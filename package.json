@@ -1,25 +1,62 @@
 {
-	"name": "helloworld-sample",
-	"displayName": "helloworld-sample",
-	"description": "HelloWorld example for VS Code",
+	"name": "phycat",
+	"displayName": "PhyCat",
+	"description": "Phycat UI for VS code",
 	"version": "0.0.1",
-	"publisher": "vscode-samples",
-	"repository": "https://github.com/Microsoft/vscode-extension-samples/helloworld-sample",
+	"publisher": "mons-radix",
+	"repository": " https://bitbucket.org/monsradix/phycat-vscode.git",
 	"engines": {
-		"vscode": "^1.34.0"
+		"vscode": "^1.47.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onView:systemtree",
+		"onCommand:phycat.helloWorld",
+		"onCommand:phycat.start",
+		"onCommand:phycat.doRefactor",
+		"onWebviewPanel:catCoding"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"viewsWelcome": [
+			{
+				"view": "systemtree",
+				"contents": " No System Tree Found.\n [Create System Tree](command:phycat.createsystemtree)\n"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "phycat-sidebar-view",
+					"title": "PhyCat",
+					"icon": "media/circuit-board.svg"
+				}
+			]
+		},
+		"views": {
+			"phycat-sidebar-view": [
+				{
+					"id": "systemtree",
+					"name": "System Tree"
+				}
+			]
+		},
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "phycat.start",
+				"title": "Phycat: Start",
+				"category": "phycat: Cat Coding"
+			},
+			{
+				"command": "phycat.doRefactor",
+				"title": "phycat: Do some refactoring",
+				"category": "Cat Coding"
+			},
+			{
+				"command": "phycat.helloWorld",
+				"title": "Phycat: helloWorld"
 			}
 		]
 	},
@@ -31,10 +68,13 @@
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.7",
-		"@types/vscode": "^1.34.0",
+		"@types/vscode": "^1.47.0",
 		"@typescript-eslint/eslint-plugin": "^5.30.0",
 		"@typescript-eslint/parser": "^5.30.0",
 		"eslint": "^8.13.0",
 		"typescript": "^4.7.2"
+	},
+	"dependencies": {
+		"phycat-node": "file:../phycat-node"
 	}
 }

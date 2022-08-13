@@ -39,7 +39,13 @@
 			"phycat-sidebar-view": [
 				{
 					"id": "systemtree",
-					"name": "System Tree"
+					"contextualTitle": "System Outline",
+					"name": "System"
+				},
+				{
+					"id": "devicetree",
+					"contextualTitle": "Devices",
+					"name": "Devices"
 				}
 			]
 		},
@@ -57,8 +63,29 @@
 			{
 				"command": "phycat.helloWorld",
 				"title": "Phycat: helloWorld"
+			},
+			{
+				"command": "phycat.addDevice",
+				"title": "Add Device"
+			},
+			{
+				"command": "phycat.editDevice",
+				"title": "Edit Device"
 			}
-		]
+		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "phycat.addDevice",
+					"when": "view == systemtree && viewItem == bus"
+				},
+				{
+					"command": "phycat.editDevice",
+					"when": "view == systemtree && viewItem == device",
+					"group": "inline"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

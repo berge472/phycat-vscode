@@ -1,10 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { SystemTreeProvider } from './SystemTreeProvider';
+import { SystemTreeItem, SystemTreeProvider } from './SystemTreeProvider';
 
 import { helloTest, System } from 'phycat-node'
 const fs = require('fs');
+import * as path from 'path';
+
 
 
 const cats = {
@@ -12,6 +14,8 @@ const cats = {
 	'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
 	'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
+
+const system = new System();
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -21,20 +25,33 @@ export function activate(context: vscode.ExtensionContext) {
 		? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
 	
 
-	
-	const path = rootPath+'\\system.yml';
+	const system_path = path.join( rootPath as string, 'system.yml');
+	console.log(system_path);
 
-	let system = new System();
+	// let system = new System();
 
-	if (fs.existsSync(path)) {
-		system.loadFromFile(path);
+	if (fs.existsSync(system_path)) {
+		system.loadFromFile(system_path);
 		
-		console.log(path);
-	  }
+	}
+	else {
+		console.log('NO FILE');
+	}
+
+	console.log(system);
 
 
-	const systemTreeProvider = new SystemTreeProvider(system);
-	vscode.window.registerTreeDataProvider('systemtree', systemTreeProvider);
+	const busTreeProvider = new SystemTreeProvider(new SystemTreeItem(system));
+	vscode.window.registerTreeDataProvider('systemtree', busTreeProvider);
+
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('phycat.editDevice', () =>{
+			vscode.workspace.openTextDocument(system.filePath).then(doc => {
+				vscode.window.showTextDocument(doc);
+			});
+		})
+	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('phycat.start', () => {

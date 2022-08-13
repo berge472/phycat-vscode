@@ -7,24 +7,35 @@ const vscode = require("vscode");
 const SystemTreeProvider_1 = require("./SystemTreeProvider");
 const phycat_node_1 = require("phycat-node");
 const fs = require('fs');
+const path = require("path");
 const cats = {
     'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
     'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
     'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
+const system = new phycat_node_1.System();
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
     const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
         ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-    const path = rootPath + '\\system.yml';
-    let system = new phycat_node_1.System();
-    if (fs.existsSync(path)) {
-        system.loadFromFile(path);
-        console.log(path);
+    const system_path = path.join(rootPath, 'system.yml');
+    console.log(system_path);
+    // let system = new System();
+    if (fs.existsSync(system_path)) {
+        system.loadFromFile(system_path);
     }
-    const systemTreeProvider = new SystemTreeProvider_1.SystemTreeProvider(system);
-    vscode.window.registerTreeDataProvider('systemtree', systemTreeProvider);
+    else {
+        console.log('NO FILE');
+    }
+    console.log(system);
+    const busTreeProvider = new SystemTreeProvider_1.SystemTreeProvider(new SystemTreeProvider_1.SystemTreeItem(system));
+    vscode.window.registerTreeDataProvider('systemtree', busTreeProvider);
+    context.subscriptions.push(vscode.commands.registerCommand('phycat.editDevice', () => {
+        vscode.workspace.openTextDocument(system.filePath).then(doc => {
+            vscode.window.showTextDocument(doc);
+        });
+    }));
     context.subscriptions.push(vscode.commands.registerCommand('phycat.start', () => {
         CatCodingPanel.createOrShow(context.extensionUri);
     }));

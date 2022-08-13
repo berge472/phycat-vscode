@@ -4,22 +4,24 @@ exports.SystemTreeItem = exports.SystemTreeProvider = void 0;
 const vscode = require("vscode");
 const path = require("path");
 class SystemTreeProvider {
-    constructor(system) {
-        if (system)
-            this.system = system;
+    constructor(rootItem) {
+        if (rootItem)
+            this.rootItem = rootItem;
     }
     getTreeItem(element) {
+        console.log('getTreeItem');
+        console.log(element);
         return element;
     }
     getChildren(element) {
+        console.log('getChildren');
+        console.log(element);
         if (element) {
             return Promise.resolve(element.getChildren());
         }
         else {
-            if (this.system) {
-                //Create system Device Tree
-                let sysTree = new SystemTreeItem(this.system);
-                return Promise.resolve([sysTree]);
+            if (this.rootItem) {
+                return Promise.resolve(this.rootItem.getChildren());
             }
             else {
                 return Promise.resolve([]);
@@ -35,24 +37,28 @@ class SystemTreeItem extends vscode.TreeItem {
                 super(obj.name, vscode.TreeItemCollapsibleState.Expanded);
                 this.system = obj;
                 this.label = this.system.name;
+                this.contextValue = 'system';
                 break;
             case 'DataBus':
                 super(obj.name, vscode.TreeItemCollapsibleState.Expanded);
                 this.bus = obj;
                 this.label = this.bus.name;
                 this.iconPath = {
-                    light: path.join(__filename, '..', '..', 'resources', 'sitemap.svg'),
-                    dark: path.join(__filename, '..', '..', 'resources', 'sitemap.svg')
+                    light: path.join(__filename, '..', '..', 'resources', 'sitemap-blue.svg'),
+                    dark: path.join(__filename, '..', '..', 'resources', 'sitemap-blue.svg')
                 };
+                this.contextValue = 'bus';
                 break;
             case 'Device':
-                super(obj.name, vscode.TreeItemCollapsibleState.Expanded);
+                super(obj.name, vscode.TreeItemCollapsibleState.None);
                 this.device = obj;
                 this.label = this.device.name;
                 this.iconPath = {
                     light: path.join(__filename, '..', '..', 'resources', 'microchip-grn.svg'),
                     dark: path.join(__filename, '..', '..', 'resources', 'microchip-grn.svg')
                 };
+                this.contextValue = 'device';
+                this.tooltip = this.device.spec?.description;
                 break;
             default:
                 if (Array.isArray(obj)) {
@@ -75,13 +81,21 @@ class SystemTreeItem extends vscode.TreeItem {
             //     let newItem = new SystemTreeItem(b);
             //     arrRet.push(newItem)
             // });
-            arrRet.push(new SystemTreeItem(this.system.buses, 'Buses'));
-            arrRet.push(new SystemTreeItem(this.system.devices, 'Devices'));
+            this.system.buses.forEach((b) => {
+                arrRet.push(new SystemTreeItem(b));
+            });
+            this.system.devices.forEach((d) => {
+                if (!d.onBus()) {
+                    arrRet.push(new SystemTreeItem(d));
+                }
+            });
         }
         else if (this.bus) {
-            this.bus.devices.forEach((d) => {
-                let newItem = new SystemTreeItem(d);
-                arrRet.push(newItem);
+            this.bus.connections.forEach((c) => {
+                if (c.device) {
+                    let newItem = new SystemTreeItem(c.device);
+                    arrRet.push(newItem);
+                }
             });
         }
         else if (this.busList) {
@@ -96,6 +110,7 @@ class SystemTreeItem extends vscode.TreeItem {
                 arrRet.push(newItem);
             });
         }
+        console.log(arrRet);
         return arrRet;
     }
 }

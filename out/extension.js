@@ -157,9 +157,11 @@ class CatCodingPanel {
     }
     _getHtmlForWebview(webview, catGifPath) {
         // Local path to main script run in the webview
-        const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js');
+        const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'media', 'webviews', 'DeviceView', 'DeviceView.js');
+        const vueScriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'media', 'cdns', 'vue.js');
         // And the uri we use to load this script in the webview
         const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
+        const vueScriptUri = webview.asWebviewUri(vueScriptPathOnDisk);
         // Local path to css styles
         const styleResetPath = vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css');
         const stylesPathMainPath = vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css');
@@ -180,12 +182,25 @@ class CatCodingPanel {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${stylesResetUri}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">
+				<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+       			<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/js/all.min.js"></script>
+
 				<title>Cat Coding</title>
 			</head>
 			<body>
-				<img src="${catGifPath}" width="300" />
-				<h1 id="lines-of-code-counter">0</h1>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
+				<div id="app">
+				<h1>{{device.name}}</h1>
+			
+
+					<div class="col-md-12">
+
+						<!-- <div id="accordion" role="tablist" aria-multiselectable="true">
+							<service-item v-for="reg in device.registers" v-bind:reg="reg" v-bind:key="reg.uuid"></service-item>
+							<device-item v-bind:reg="reg" v-bind:key="reg.uuid"></service-item>
+						</div> -->
+					</div>
+					</div>
+				<script nonce="${nonce}" src="${scriptUri}"\> </script>
 			</body>
 			</html>`;
     }

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Bootstrap CSS -->
+
+       <script src="../../cdns/vue.js"></script>
+       <link href="../../reset.css" rel="stylesheet">
+       <link href="../../vscode.css" rel="stylesheet">
+       <link href="DeviceView.css" rel="stylesheet">
+
+       <title>Device View</title>
+   </head>
+   <body class="">
+       <div id="app">
+           
+            <div class="col-md-12">
+                <device-item v-bind:device="device" ></device-item>
+                <!-- <div id="accordion" role="tablist" aria-multiselectable="true">
+                    <service-item v-for="reg in device.registers" v-bind:reg="reg" v-bind:key="reg.uuid"></service-item>
+                    <device-item v-bind:reg="reg" v-bind:key="reg.uuid"></service-item>
+                </div> -->
+            </div>
+
+            <div v-bind:device="device" >
+                
+            </div>
+        </div>
+        
+                    <!-- <script src="ble.js"></script> -->
+        <script src="DeviceView.js"\> </script>
+    </body>
+</html>
